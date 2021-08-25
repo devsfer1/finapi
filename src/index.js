@@ -44,13 +44,13 @@ app.post("/account", (request, response) => {
   });
 
   return response.status(201).send();
-})
+});
 
 app.get("/statement", VerifyIfExistsAccountCPF, (request, response) => {
   const { customer } = request;
 
   return response.json(customer.statement)
-})
+});
 
 app.post("/deposit", VerifyIfExistsAccountCPF, (request, response) => {
   const { description, amount } = request.body;
@@ -67,7 +67,7 @@ app.post("/deposit", VerifyIfExistsAccountCPF, (request, response) => {
   customer.statement.push(statementOperation);
 
   return response.status(201).send();
-})
+});
 
 app.post("/withdraw", VerifyIfExistsAccountCPF, (request, response) => {
   const { amount } = request.body;
@@ -88,7 +88,7 @@ app.post("/withdraw", VerifyIfExistsAccountCPF, (request, response) => {
   customer.statement.push(statementOperation);
 
   return response.status(201).send();
-})
+});
 
 app.get("/statement/date", VerifyIfExistsAccountCPF, (request, response) => {
   const { customer } = request;
@@ -99,6 +99,21 @@ app.get("/statement/date", VerifyIfExistsAccountCPF, (request, response) => {
   const statement = customer.statement.filter((statement) => statement.created_at.toDateString() === new Date(dateFormat).toDateString())
 
   return response.json(statement);
+});
+
+app.put("/account", VerifyIfExistsAccountCPF, (request, response) => {
+  const { name } = request.body;
+  const { customer } = request;
+
+  customer.name = name;
+
+  return response.status(201).send();
+});
+
+app.get("/account", VerifyIfExistsAccountCPF, (request, response) => {
+  const { customer } = request;
+
+  return response.json(customer);
 })
 
 app.listen(3333);
