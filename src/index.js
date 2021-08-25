@@ -69,6 +69,38 @@ app.post("/deposit", VerifyIfExistsAccountCPF, (request, response) => {
   return response.status(201).send();
 })
 
+app.post("/withdraw", VerifyIfExistsAccountCPF, (request, response) => {
+  const { amount } = request.body;
+  const { customer } = request;
+
+  const balance = getBalance(costumer.statement);
+
+  if(balance < amount) {
+    return response.status(400).json({error: "Insufficient funds!" });
+  }
+
+  const statementOperation = {
+    amount,
+    created_at: new Date(),
+    type: "debit",
+  };
+
+  customer.statement.push(statementOperation);
+
+  return response.status(201).send();
+})
+
+app.get("/statement/date", VerifyIfExistsAccountCPF, (request, response) => {
+  const { customer } = request;
+  const { date } = request.query;
+
+  const dateFormat = new Date(date + " 00:00");
+  
+  const statement = customer.statement.filter((statement) => statement.created_at.toDateString() === new Date(dateFormat).toDateString())
+
+  return response.json(statement);
+})
+
 app.listen(3333);
 
 // app.use(VerifyIfExistsAccountCPF)
